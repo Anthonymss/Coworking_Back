@@ -1,7 +1,7 @@
-package com.coworking.spaces_service.configuration.security;
+package com.coworking.reservation_service.configuration.security;
 
-import com.coworking.spaces_service.configuration.jwt.JwtAuthenticationFilter;
-import com.coworking.spaces_service.util.enums.RoleName;
+import com.coworking.reservation_service.configuration.jwt.JwtAuthenticationFilter;
+import com.coworking.reservation_service.enums.RoleName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +38,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> {
                     logger.debug("Configuring authorized requests...");
                     authorize
-                            //PROXIMA IMPLEMENTATION
-                            //.requestMatchers("api/v1/management").hasAnyRole(RoleName.ADMIN.name(), RoleName.USER.name())
-                            .requestMatchers("api/v1/spaces/**").permitAll()//hasAuthority(RoleName.USER.name())
-                            .requestMatchers("api/v1/test/user").hasAnyRole(RoleName.USER.name())//test
-                            .requestMatchers("api/v1/test/admin").hasAnyRole(RoleName.ADMIN.name())//test
-                            .requestMatchers("api/v1/management-spaces").hasAnyRole(RoleName.ADMIN.name())//management-spaces
+                            .requestMatchers("api/v1/reservation/**").hasAuthority(RoleName.USER.name())
                             .anyRequest().authenticated();
                 })
                 .sessionManagement(session -> {

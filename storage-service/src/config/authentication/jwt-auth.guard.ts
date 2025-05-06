@@ -26,7 +26,7 @@ import {
       }
   
       const token = authHeader.slice(7).trim();
-  
+      console.log('Token:', token);
       const secretBase64 = this.config.get<string>('JWT_SECRET');
       if (!secretBase64) {
         throw new UnauthorizedException('JWT_SECRET not configured');

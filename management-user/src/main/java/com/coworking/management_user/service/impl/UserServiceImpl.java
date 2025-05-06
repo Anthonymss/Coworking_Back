@@ -9,9 +9,11 @@ import com.coworking.management_user.repository.UserRepository;
 import com.coworking.management_user.dto.UserDto;
 import com.coworking.management_user.service.feignclient.AuthServiceFeignClient;
 import com.coworking.management_user.service.UserService;
+import com.coworking.management_user.service.feignclient.StorageServiceFeignClient;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -20,6 +22,8 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserAuthenticationRepository userAuthenticationRepository;
+    @Autowired
+    private StorageServiceFeignClient storageServiceFeignClient;
     @Autowired
     private AuthServiceFeignClient authServiceFeignClient;
     private static final String AUTH_SERVICE_NAME = "auth-service";
@@ -39,22 +43,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String updateUser( UserDto userDto) {
+    public String updateUser(UserDto userDto, MultipartFile file) {
         Optional<User> userOptional = userRepository.findByEmail(userDto.getEmail());
         if (userOptional.isEmpty()) {
             throw new EmailNotFoundException("Not found user with email " + userDto.getEmail());
         }
+
         try {
+            String imageUrl = storageServiceFeignClient.upload(file);
             User user = userOptional.get();
             user.setFirstName(userDto.getFirstName());
             user.setLastName(userDto.getLastName());
-            user.setProfileImageUrl(userDto.getProfileImageUrl());
+            user.setProfileImageUrl(imageUrl);
+
             userRepository.save(user);
             return "User updated successfully";
-        }catch (Exception e){
-            return "Failed to update user";
+        } catch (Exception e) {
+            return "Failed to update user: " + e.getMessage();
         }
     }
+
 
     @Override
     public void deleteUser(Long id) {
