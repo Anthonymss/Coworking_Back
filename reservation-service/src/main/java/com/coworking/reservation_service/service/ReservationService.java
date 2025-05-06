@@ -1,8 +1,8 @@
 package com.coworking.reservation_service.service;
 
-import com.coworking.reservation_service.presentation.dto.ReservationInvoiceDetailsResponse;
-import com.coworking.reservation_service.presentation.dto.ReservationRequestDto;
-import com.coworking.reservation_service.presentation.dto.TimeSlotDto;
+import com.coworking.reservation_service.dto.ReservationInvoiceDetailsResponse;
+import com.coworking.reservation_service.dto.ReservationRequestDto;
+import com.coworking.reservation_service.dto.TimeSlotDto;
 
 import java.time.LocalDate;
 import java.util.List;

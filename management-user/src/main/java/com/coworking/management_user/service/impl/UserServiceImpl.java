@@ -2,11 +2,11 @@ package com.coworking.management_user.service.impl;
 
 import com.coworking.management_user.exception.EmailMismatchException;
 import com.coworking.management_user.exception.EmailNotFoundException;
-import com.coworking.management_user.persistence.entity.User;
-import com.coworking.management_user.persistence.entity.UserAuthentication;
-import com.coworking.management_user.persistence.repository.UserAuthenticationRepository;
-import com.coworking.management_user.persistence.repository.UserRepository;
-import com.coworking.management_user.presentation.dto.UserDto;
+import com.coworking.management_user.entity.User;
+import com.coworking.management_user.entity.UserAuthentication;
+import com.coworking.management_user.repository.UserAuthenticationRepository;
+import com.coworking.management_user.repository.UserRepository;
+import com.coworking.management_user.dto.UserDto;
 import com.coworking.management_user.service.feignclient.AuthServiceFeignClient;
 import com.coworking.management_user.service.UserService;
 import lombok.AllArgsConstructor;

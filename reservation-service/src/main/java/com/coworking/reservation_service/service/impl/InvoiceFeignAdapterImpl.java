@@ -1,8 +1,8 @@
 package com.coworking.reservation_service.service.impl;
 
-import com.coworking.reservation_service.persistence.entity.Reservation;
-import com.coworking.reservation_service.presentation.dto.InvoiceRequest;
-import com.coworking.reservation_service.presentation.dto.InvoiceResponse;
+import com.coworking.reservation_service.entity.Reservation;
+import com.coworking.reservation_service.dto.InvoiceRequest;
+import com.coworking.reservation_service.dto.InvoiceResponse;
 import com.coworking.reservation_service.service.InvoiceFeignAdapter;
 import com.coworking.reservation_service.service.feignclient.InvoiceFeignClient;
 import lombok.RequiredArgsConstructor;

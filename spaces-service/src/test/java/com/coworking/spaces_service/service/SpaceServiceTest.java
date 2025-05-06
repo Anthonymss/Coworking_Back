@@ -1,10 +1,10 @@
 package com.coworking.spaces_service.service;
 import com.coworking.spaces_service.exception.NotFoundSpace;
-import com.coworking.spaces_service.persistence.entity.Site;
-import com.coworking.spaces_service.persistence.entity.Space;
-import com.coworking.spaces_service.persistence.repository.SpaceRepository;
-import com.coworking.spaces_service.presentation.dto.SpaceDto;
-import com.coworking.spaces_service.presentation.dto.SpaceResponseDto;
+import com.coworking.spaces_service.entity.Site;
+import com.coworking.spaces_service.entity.Space;
+import com.coworking.spaces_service.repository.SpaceRepository;
+import com.coworking.spaces_service.dto.SpaceDto;
+import com.coworking.spaces_service.dto.SpaceResponseDto;
 import com.coworking.spaces_service.service.impl.SpaceServiceImpl;
 import com.coworking.spaces_service.util.enums.SpaceType;
 import org.junit.jupiter.api.BeforeEach;

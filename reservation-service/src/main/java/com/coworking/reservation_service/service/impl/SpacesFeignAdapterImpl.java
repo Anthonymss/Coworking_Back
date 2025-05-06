@@ -1,6 +1,6 @@
 package com.coworking.reservation_service.service.impl;
 
-import com.coworking.reservation_service.presentation.dto.SpaceResponseDto;
+import com.coworking.reservation_service.dto.SpaceResponseDto;
 import com.coworking.reservation_service.service.SpacesFeignAdapter;
 import com.coworking.reservation_service.service.feignclient.SpacesFeignClient;
 import lombok.RequiredArgsConstructor;

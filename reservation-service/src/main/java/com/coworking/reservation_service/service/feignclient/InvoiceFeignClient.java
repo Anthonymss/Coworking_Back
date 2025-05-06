@@ -1,7 +1,7 @@
 package com.coworking.reservation_service.service.feignclient;
 
-import com.coworking.reservation_service.presentation.dto.InvoiceRequest;
-import com.coworking.reservation_service.presentation.dto.InvoiceResponse;
+import com.coworking.reservation_service.dto.InvoiceRequest;
+import com.coworking.reservation_service.dto.InvoiceResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

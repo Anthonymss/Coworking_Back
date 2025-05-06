@@ -1,6 +1,6 @@
 package com.coworking.reservation_service.service;
 
-import com.coworking.reservation_service.presentation.dto.ReservationInvoiceDetailsResponse;
+import com.coworking.reservation_service.dto.ReservationInvoiceDetailsResponse;
 import com.coworking.reservation_service.service.feignclient.MailServiceFeignClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;

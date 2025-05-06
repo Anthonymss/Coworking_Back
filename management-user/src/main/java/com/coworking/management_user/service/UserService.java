@@ -1,6 +1,6 @@
 package com.coworking.management_user.service;
 
-import com.coworking.management_user.presentation.dto.UserDto;
+import com.coworking.management_user.dto.UserDto;
 
 import java.util.List;
 

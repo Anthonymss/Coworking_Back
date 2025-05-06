@@ -1,7 +1,7 @@
 package com.coworking.auth_service.service;
 
-import com.coworking.auth_service.presentation.dto.AuthRequest;
-import com.coworking.auth_service.presentation.dto.UserDto;
+import com.coworking.auth_service.dto.AuthRequest;
+import com.coworking.auth_service.dto.UserDto;
 
 import java.util.Map;
 

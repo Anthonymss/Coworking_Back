@@ -1,9 +1,8 @@
 package com.coworking.spaces_service.service;
 
-import com.coworking.spaces_service.presentation.dto.SpaceDto;
-import com.coworking.spaces_service.presentation.dto.SpaceResponseDto;
+import com.coworking.spaces_service.dto.SpaceDto;
+import com.coworking.spaces_service.dto.SpaceResponseDto;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 

@@ -1,9 +1,0 @@
-package com.coworking.auth_service.presentation.dto;
-
-import lombok.Data;
-
-@Data
-public class AuthRequest {
-    private String email;
-    private String password;
-}

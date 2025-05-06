@@ -2,14 +2,14 @@ package com.coworking.auth_service.service.impl;
 
 import com.coworking.auth_service.configuration.jwt.JwtTokenProvider;
 import com.coworking.auth_service.exception.*;
-import com.coworking.auth_service.persistence.entity.Role;
-import com.coworking.auth_service.persistence.entity.User;
-import com.coworking.auth_service.persistence.entity.UserAuthentication;
-import com.coworking.auth_service.persistence.repository.RoleRepository;
-import com.coworking.auth_service.persistence.repository.UserAuthenticationRepository;
-import com.coworking.auth_service.persistence.repository.UserRepository;
-import com.coworking.auth_service.presentation.dto.AuthRequest;
-import com.coworking.auth_service.presentation.dto.UserDto;
+import com.coworking.auth_service.entity.Role;
+import com.coworking.auth_service.entity.User;
+import com.coworking.auth_service.entity.UserAuthentication;
+import com.coworking.auth_service.repository.RoleRepository;
+import com.coworking.auth_service.repository.UserAuthenticationRepository;
+import com.coworking.auth_service.repository.UserRepository;
+import com.coworking.auth_service.dto.AuthRequest;
+import com.coworking.auth_service.dto.UserDto;
 import com.coworking.auth_service.service.IMethodInfoGoogle;
 import com.coworking.auth_service.service.NotificationService;
 import com.coworking.auth_service.service.feignclient.MailServiceFeignClient;
@@ -20,7 +20,6 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service

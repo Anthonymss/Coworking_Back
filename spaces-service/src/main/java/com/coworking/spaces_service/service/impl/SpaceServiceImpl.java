@@ -1,19 +1,18 @@
 package com.coworking.spaces_service.service.impl;
 
 import com.coworking.spaces_service.exception.NotFoundSpace;
-import com.coworking.spaces_service.persistence.entity.Space;
-import com.coworking.spaces_service.persistence.repository.EquipmentRepository;
-import com.coworking.spaces_service.persistence.repository.SpaceEquipmentRepository;
-import com.coworking.spaces_service.persistence.repository.SpaceRepository;
-import com.coworking.spaces_service.presentation.dto.EquipmentDto;
-import com.coworking.spaces_service.presentation.dto.SpaceDto;
-import com.coworking.spaces_service.presentation.dto.SpaceResponseDto;
+import com.coworking.spaces_service.entity.Space;
+import com.coworking.spaces_service.repository.EquipmentRepository;
+import com.coworking.spaces_service.repository.SpaceEquipmentRepository;
+import com.coworking.spaces_service.repository.SpaceRepository;
+import com.coworking.spaces_service.dto.EquipmentDto;
+import com.coworking.spaces_service.dto.SpaceDto;
+import com.coworking.spaces_service.dto.SpaceResponseDto;
 import com.coworking.spaces_service.service.SpaceService;
 import com.coworking.spaces_service.util.enums.SpaceType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;

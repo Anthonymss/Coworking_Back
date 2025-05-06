@@ -1,7 +1,7 @@
 package com.coworking.auth_service.configuration.security;
 
-import com.coworking.auth_service.persistence.entity.User;
-import com.coworking.auth_service.persistence.repository.UserRepository;
+import com.coworking.auth_service.entity.User;
+import com.coworking.auth_service.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

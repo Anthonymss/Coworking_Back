@@ -1,7 +1,7 @@
 package com.coworking.auth_service.configuration.jwt;
 
 import com.coworking.auth_service.exception.InvalidJwtTokenException;
-import com.coworking.auth_service.persistence.entity.User;
+import com.coworking.auth_service.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;

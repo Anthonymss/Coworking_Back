@@ -3,12 +3,12 @@ package com.coworking.notifications_service.service;
 
 import com.coworking.notifications_service.exception.EmailSendFailed;
 import com.coworking.notifications_service.exception.TempladeNotFound;
-import com.coworking.notifications_service.persistense.entity.NotificationTemplate;
-import com.coworking.notifications_service.persistense.entity.UserNotification;
-import com.coworking.notifications_service.persistense.repository.NotificationTemplateRepository;
-import com.coworking.notifications_service.persistense.repository.UserNotificationRepository;
-import com.coworking.notifications_service.presentation.dto.ReservationInvoiceDetailsResponse;
-import com.coworking.notifications_service.presentation.dto.UserDto;
+import com.coworking.notifications_service.entity.NotificationTemplate;
+import com.coworking.notifications_service.entity.UserNotification;
+import com.coworking.notifications_service.repository.NotificationTemplateRepository;
+import com.coworking.notifications_service.repository.UserNotificationRepository;
+import com.coworking.notifications_service.dto.ReservationInvoiceDetailsResponse;
+import com.coworking.notifications_service.dto.UserDto;
 import com.coworking.notifications_service.service.mailSend.EmailSenderService;
 import com.coworking.notifications_service.util.EmailContentBuilder;
 import lombok.AllArgsConstructor;
@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.DecimalFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;

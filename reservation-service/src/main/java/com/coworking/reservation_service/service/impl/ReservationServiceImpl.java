@@ -1,8 +1,8 @@
 package com.coworking.reservation_service.service.impl;
 
-import com.coworking.reservation_service.persistence.entity.Reservation;
-import com.coworking.reservation_service.persistence.repository.ReservationRepository;
-import com.coworking.reservation_service.presentation.dto.*;
+import com.coworking.reservation_service.dto.*;
+import com.coworking.reservation_service.entity.Reservation;
+import com.coworking.reservation_service.repository.ReservationRepository;
 import com.coworking.reservation_service.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
