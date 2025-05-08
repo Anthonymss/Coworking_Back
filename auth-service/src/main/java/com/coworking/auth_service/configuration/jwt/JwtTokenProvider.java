@@ -1,14 +1,13 @@
 package com.coworking.auth_service.configuration.jwt;
 
-import com.coworking.auth_service.exception.InvalidJwtTokenException;
 import com.coworking.auth_service.entity.User;
+import com.coworking.auth_service.exception.InvalidJwtTokenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
+
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -19,75 +18,93 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
 
     @Value("${jwt.secret}")
-    private String jwtSecret;
+    private String accessSecret;
 
     @Value("${jwt.expiration}")
-    private int jwtExpirationMs;
+    private long accessExpirationMs;
 
+    @Value("${jwt.refresh.secret}")
+    private String refreshSecret;
 
-    private Key getSigningKey() {
-        byte[] keyBytes = Base64.getDecoder().decode(jwtSecret);
-        return Keys.hmacShaKeyFor(keyBytes);
+    @Value("${jwt.refresh.expiration}")
+    private long refreshExpirationMs;
+
+    private Key keyFrom(String base64Secret) {
+        byte[] bytes = Base64.getDecoder().decode(base64Secret);
+        return Keys.hmacShaKeyFor(bytes);
     }
-    public String generateToken(Authentication authentication) {
-        List<String> roles = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
 
-        return Jwts.builder()
-                .setSubject(authentication.getName())
-                .claim("roles", roles)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
-                .compact();
-    }
-    public String generateToken(User user) {
+    public String generateAccessToken(User user) {
         List<String> roles = user.getRoles().stream()
-                .map(x->x.getName().name())
+                .map(role -> role.getName().name())
                 .collect(Collectors.toList());
 
         return Jwts.builder()
                 .setSubject(user.getEmail())
+                .claim("id", user.getId())
+                .claim("firstName", user.getFirstName())
+                .claim("lastName", user.getLastName())
+                .claim("email", user.getEmail())
                 .claim("roles", roles)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
-                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+                .setExpiration(new Date(System.currentTimeMillis() + accessExpirationMs))
+                .signWith(keyFrom(accessSecret), SignatureAlgorithm.HS512)
                 .compact();
     }
 
-
-
-    public String getUsernameFromToken(String token) {
-        Claims claims = Jwts.parserBuilder()
-                .setSigningKey(getSigningKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
+    public String generateRefreshToken(User user) {
+        return Jwts.builder()
+                .setSubject(user.getEmail())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + refreshExpirationMs))
+                .signWith(keyFrom(refreshSecret), SignatureAlgorithm.HS512)
+                .compact();
     }
 
-    public boolean validateToken(String token) {
+    public boolean validateAccessToken(String token) {
+        return validateToken(token, accessSecret);
+    }
+
+    public boolean validateRefreshToken(String token) {
+        return validateToken(token, refreshSecret);
+    }
+
+    private boolean validateToken(String token, String base64Secret) {
         try {
-            Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
+            Jwts.parserBuilder()
+                    .setSigningKey(keyFrom(base64Secret))
+                    .build()
+                    .parseClaimsJws(token);
             return true;
-        } catch (SignatureException e) {
-            throw new InvalidJwtTokenException("Invalid JWT signature");
-        } catch (MalformedJwtException e) {
-            throw new InvalidJwtTokenException("Invalid JWT token");
-        } catch (ExpiredJwtException e) {
-            throw new InvalidJwtTokenException("JWT token is expired");
-        } catch (UnsupportedJwtException e) {
-            throw new InvalidJwtTokenException("JWT token is unsupported");
-        } catch (IllegalArgumentException e) {
-            throw new InvalidJwtTokenException("JWT claims string is empty");
+        } catch (JwtException e) {
+            throw new InvalidJwtTokenException("Token inválido o expirado: " + e.getMessage());
         }
     }
 
+    public Claims getAccessClaims(String token) {
+        return getClaims(token, accessSecret);
+    }
+
+    public Claims getRefreshClaims(String token) {
+        return getClaims(token, refreshSecret);
+    }
+
+    private Claims getClaims(String token, String base64Secret) {
+        return Jwts.parserBuilder()
+                .setSigningKey(keyFrom(base64Secret))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public String getUsernameFromToken(String token) {
+        return getAccessClaims(token).getSubject();
+    }
+
     public String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+        String bearer = request.getHeader("Authorization");
+        if (bearer != null && bearer.startsWith("Bearer ")) {
+            return bearer.substring(7);
         }
         return null;
     }

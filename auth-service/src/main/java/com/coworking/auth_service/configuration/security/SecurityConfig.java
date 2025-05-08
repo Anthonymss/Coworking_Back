@@ -39,12 +39,11 @@ public class SecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeRequests(authorize -> authorize
-                        //proxima configuration
                         //http://localhost:8081/api/v1/auth/register/oauth2/google
                         .requestMatchers("api/v1/auth/**").permitAll()
                         .requestMatchers("api/**").permitAll()
                         .requestMatchers("api").permitAll()
-                        .requestMatchers("api/v1/users").hasRole(RoleName.ADMIN.toString())
+                        .requestMatchers("api/v1/users").hasAuthority(RoleName.ADMIN.name())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

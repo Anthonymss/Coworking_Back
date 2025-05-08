@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface SpaceService {
-
-    public List<SpaceDto> getFilteredSpaces(String city, String district, String type);
+    public Map<String, Object> getFilteredSpaces(String city, String district, String type, int page, int size);
     public SpaceDto getSpaceById(Long id);
     public SpaceResponseDto getInfoSpace(Long id);
 

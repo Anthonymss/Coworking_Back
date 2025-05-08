@@ -11,4 +11,5 @@ import org.springframework.web.multipart.MultipartFile;
 public interface StogeServiceFeingClient {
     @PostMapping(value = "/upload/spaces", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     String upload(@RequestPart("file") MultipartFile file);
+
 }

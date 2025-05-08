@@ -32,7 +32,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         logger.debug("Configuring SecurityFilterChain...");
-
+        System.out.println("ROLES "+RoleName.ADMIN.name()+" :-: "+RoleName.USER.name());
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorize -> {
@@ -43,7 +43,7 @@ public class SecurityConfig {
                             .requestMatchers("api/v1/spaces/**").permitAll()//hasAuthority(RoleName.USER.name())
                             .requestMatchers("api/v1/test/user").hasAnyRole(RoleName.USER.name())//test
                             .requestMatchers("api/v1/test/admin").hasAnyRole(RoleName.ADMIN.name())//test
-                            .requestMatchers("api/v1/management-spaces").hasAnyRole(RoleName.ADMIN.name())//management-spaces
+                            .requestMatchers("api/v1/management-spaces/**").hasAuthority(RoleName.ADMIN.name())
                             .anyRequest().authenticated();
                 })
                 .sessionManagement(session -> {

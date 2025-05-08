@@ -1,64 +1,46 @@
 package com.coworking.spaces_service.controller;
 
-import com.coworking.spaces_service.dto.EquipmentDto;
-import com.coworking.spaces_service.dto.SpaceDto;
+import com.coworking.spaces_service.dto.management.CreateFullSpaceRequest;
+import com.coworking.spaces_service.dto.management.SiteDto;
 import com.coworking.spaces_service.service.impl.SpaceManagementService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
-@RequestMapping("api/v1/management-spaces")
-@RestController
+@Slf4j
 @RequiredArgsConstructor
+@RestController
+@RequestMapping("/api/v1/management-spaces")
 public class ManagementSpacesController {
-    private final SpaceManagementService service;
-    //spaces
-    @PostMapping("space")
-    public ResponseEntity<String> createSpace(){
-        return new ResponseEntity<>(this.service.createSpace(), HttpStatus.CREATED);
+    private final  SpaceManagementService service;//no probado-test
+    @PostMapping(value = "/space/full", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> createFullSpace(
+            @RequestPart("data") String dataJson,
+            @RequestPart("image") MultipartFile image) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        CreateFullSpaceRequest request = null;
+        try {
+            request = objectMapper.readValue(dataJson, CreateFullSpaceRequest.class);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al deserializar el objeto");
+        }
+        if (request.getName() == null || request.getName().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El nombre es obligatorio");
+        }
+
+        return ResponseEntity.ok(this.service.createFullSpace(request,image));
     }
-    /*@GetMapping("space")
-    public ResponseEntity<List<SpaceDto>> getAllSpace(){
-        return new ResponseEntity<>(this.service.getAllSpace(),HttpStatus.OK);
-    }
-    @GetMapping("space/types")
-    public ResponseEntity<List<String>> getAllTypeSpace(){
-        return new ResponseEntity<>(this.service.getAllTypeSpace(),HttpStatus.OK);
-    }
-    @PutMapping("space")
-    public ResponseEntity<String> updateSpace(){
-        return  new ResponseEntity<>(this.service.updateSpace(),HttpStatus.OK);
-    }
-    @DeleteMapping("space")
-    public ResponseEntity<String> deleteSpaceById(){
-        return  new ResponseEntity<>(this.service.deleteSpaceById(),HttpStatus.NO_CONTENT);
-    }
-    //site
-    @PostMapping("site")
-    public ResponseEntity<String> createSite() {
-        return  new ResponseEntity<>(this.service.createSite(),HttpStatus.CREATED);
+    @GetMapping("/sites")
+    public ResponseEntity<List<SiteDto>> getAllSite(){
+        return ResponseEntity.ok(this.service.getAllSite());
     }
 
-    @GetMapping("site")
-    public ResponseEntity<List<SiteDto>> getAllSite(){
-        return  new ResponseEntity<>(this.service.getAllSite(),HttpStatus.OK);
-    }
-    @PutMapping("site")
-    public ResponseEntity<String> updateSite(){
-        return new ResponseEntity<>(this.service.updateSite(),HttpStatus.OK);
-    }
-    //equipment
-    @PostMapping("equipment")
-    public ResponseEntity<String> createEquipment(){
-        return new ResponseEntity<>(this.service.createEquipment(),HttpStatus.CREATED);
-    }
-    @GetMapping()
-    public ResponseEntity<List<EquipmentDto>> getAllEquipment(){
-        return new ResponseEntity<>(this.service.getAllEquipment(),HttpStatus.OK);
-    }
-*/
 
 }
