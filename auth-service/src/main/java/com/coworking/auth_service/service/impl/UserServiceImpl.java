@@ -1,6 +1,7 @@
 package com.coworking.auth_service.service.impl;
 
 import com.coworking.auth_service.configuration.jwt.JwtTokenProvider;
+import com.coworking.auth_service.dto.AuthResponseDto;
 import com.coworking.auth_service.exception.*;
 import com.coworking.auth_service.entity.Role;
 import com.coworking.auth_service.entity.User;
@@ -61,7 +62,7 @@ public class UserServiceImpl implements UserService, IMethodInfoGoogle {
     }
     @Override
     @Transactional
-    public Map<String,String> generateTokenRegisterForGoogle(String idTokenString) {
+    public AuthResponseDto generateTokenRegisterForGoogle(String idTokenString) {
         Map<String,String> map=getInfoGoogle(idTokenString);
         GoogleIdToken.Payload payload = verifyAndGetPayload(idTokenString);
         String email = map.get("email");
@@ -85,7 +86,7 @@ public class UserServiceImpl implements UserService, IMethodInfoGoogle {
                 .user(newUser)
                 .authProvider("google")
                 .build();
-        userRepository.save(newUser);
+        User userSave=userRepository.save(newUser);
         authenticationRepository.save(userAuthentication);
         UserDto userDtoSend =UserDto.builder()
                 .id(newUser.getId())
@@ -95,15 +96,14 @@ public class UserServiceImpl implements UserService, IMethodInfoGoogle {
                 .email(newUser.getEmail())
                 .build();
         notificationService.sendWelcomeEmailAsync("WelcomeTemplate", userDtoSend);
-        User userResponse=userRepository.findByEmail(email).get();
-        String TOKEN=jwtTokenProvider.generateToken(newUser);
-        return buildResponseMap(userResponse,TOKEN);
-
+        String accessToken  = jwtTokenProvider.generateAccessToken(userSave);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(userSave);
+        return new AuthResponseDto(accessToken, refreshToken);
     }
 
     @Override
     @Transactional
-    public Map<String,String> generateTokenLoginForGoogle(String tokenGoogle) {
+    public AuthResponseDto generateTokenLoginForGoogle(String tokenGoogle) {
         GoogleIdToken.Payload payload = verifyAndGetPayload(tokenGoogle);
 
         String email = payload.getEmail();
@@ -111,8 +111,9 @@ public class UserServiceImpl implements UserService, IMethodInfoGoogle {
         if (existingUser.isPresent()) {
             User userResponse=existingUser.get();
             if(userResponse.getStatusOauthEnabled()){
-                String TOKEN=jwtTokenProvider.generateToken(userResponse);
-                return buildResponseMap(userResponse,TOKEN);
+                String accessToken  = jwtTokenProvider.generateAccessToken(userResponse);
+                String refreshToken = jwtTokenProvider.generateRefreshToken(userResponse);
+                return new AuthResponseDto(accessToken, refreshToken);
             }
             throw new UserNotOauthForGoogle("User with "+email+" not authorized to use Google OAuth");
         }
@@ -153,21 +154,15 @@ public class UserServiceImpl implements UserService, IMethodInfoGoogle {
 
 
     @Override
-    public Map<String, String> authenticateUser(AuthRequest authRequest) {
-        Optional<User> userOptional = this.userRepository.findByEmail(authRequest.getEmail());
-        if (userOptional.isEmpty()) {
-            throw new UserNotFoundException(authRequest.getEmail());
-        }
-        User user = userOptional.get();
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
-            );
-            final String jwt = jwtTokenProvider.generateToken(authentication);
-            return buildResponseMap(user, jwt);
-        } catch (Exception e) {
-            throw new UserNotAuthorization("Invalid email or password");
-        }
+    public AuthResponseDto authenticateUser(AuthRequest authRequest) {
+        User user = userRepository.findByEmail(authRequest.getEmail())
+                .orElseThrow(() -> new UserNotFoundException(authRequest.getEmail()));
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getPassword())
+        );
+        String accessToken  = jwtTokenProvider.generateAccessToken(user);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(user);
+        return new AuthResponseDto(accessToken, refreshToken);
     }
 
 
@@ -202,26 +197,6 @@ public class UserServiceImpl implements UserService, IMethodInfoGoogle {
         mapAccountGoogle.put("email", payload.getEmail());
             mapAccountGoogle.put("profileImageUrl", (String) payload.get("picture"));
         return mapAccountGoogle;
-    }
-
-    /**
-     * Generates a response map containing user details and a JWT token
-     *
-     * @param userResponse The user object containing details
-     * @param token The JSON Web Token for authentication
-     * @return A map with user details and token
-     */
-    private Map<String, String> buildResponseMap(User userResponse, String token){
-        Map<String, String> response=new HashMap<String, String>();
-        response.put("jwt", token);
-        response.put("id", String.valueOf(userResponse.getId()));
-        response.put("firstName", userResponse.getFirstName());
-        response.put("lastName", userResponse.getLastName());
-        response.put("email", userResponse.getEmail());
-        response.put("roles", userResponse.getRoles().stream()
-                .map(role -> role.getName().toString())
-                .collect(Collectors.joining(", ")));
-        return response;
     }
 
 

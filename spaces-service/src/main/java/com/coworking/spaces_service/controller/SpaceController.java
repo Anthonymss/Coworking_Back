@@ -18,17 +18,16 @@ public class SpaceController {
     private final SpaceService spaceService;
 
     @GetMapping
-    public ResponseEntity<List<SpaceDto>> getSpaces(
+    public ResponseEntity<Map<String, Object>> getSpaces(
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String district,
-            @RequestParam(required = false) String spaceType) {
-        System.out.println("getConsulta:  "+city+"  "+district   +"   "+spaceType);
-        String cityParam = (city != null && !city.isEmpty()) ? city : null;
-        String districtParam = (district != null && !district.isEmpty()) ? district : null;
-        String typeParam = (spaceType != null && !spaceType.isEmpty()) ? spaceType : null;
-
-        return new ResponseEntity<>(spaceService.getFilteredSpaces(cityParam, districtParam, typeParam), HttpStatus.OK);
+            @RequestParam(required = false) String spaceType,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Map<String, Object> response = spaceService.getFilteredSpaces(city, district, spaceType, page, size);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<SpaceDto> getSpaceById(@PathVariable Long id) {

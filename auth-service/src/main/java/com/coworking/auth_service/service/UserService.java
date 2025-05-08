@@ -1,6 +1,7 @@
 package com.coworking.auth_service.service;
 
 import com.coworking.auth_service.dto.AuthRequest;
+import com.coworking.auth_service.dto.AuthResponseDto;
 import com.coworking.auth_service.dto.UserDto;
 
 import java.util.Map;
@@ -8,7 +9,7 @@ import java.util.Map;
 
 public interface UserService {
     String registerUser(UserDto userDto);
-    Map<String,String> authenticateUser(AuthRequest authRequest);
-    public Map<String,String> generateTokenRegisterForGoogle(String tokenGoogle);
-    public Map<String,String> generateTokenLoginForGoogle(String tokenGoogle);
+    public AuthResponseDto authenticateUser(AuthRequest authRequest);
+    public AuthResponseDto generateTokenRegisterForGoogle(String idTokenString);
+    public AuthResponseDto generateTokenLoginForGoogle(String tokenGoogle);
 }
