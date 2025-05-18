@@ -1,6 +1,8 @@
 package com.coworking.spaces_service.service.impl;
 
+import com.coworking.spaces_service.dto.EquipmentForSpacesDto;
 import com.coworking.spaces_service.dto.management.CreateFullSpaceRequest;
+import com.coworking.spaces_service.dto.management.EquipmentDto;
 import com.coworking.spaces_service.dto.management.EquipmentRequest;
 import com.coworking.spaces_service.dto.management.SiteDto;
 import com.coworking.spaces_service.entity.Equipment;
@@ -13,7 +15,6 @@ import com.coworking.spaces_service.repository.SpaceEquipmentRepository;
 import com.coworking.spaces_service.repository.SpaceRepository;
 import com.coworking.spaces_service.service.feingclient.StogeServiceFeingClient;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -74,6 +75,16 @@ public class SpaceManagementService {
                         .address(x.getAddress())
                         .city(x.getCity())
                         .district(x.getDistrict())
+                        .build()
+        ).collect(Collectors.toList());
+    }
+
+    public List<EquipmentDto> getAllEquipments() {
+        return this.equipmentRepository.findAll().stream().map(
+                equipment-> EquipmentDto.builder()
+                        .id(equipment.getId())
+                        .name(equipment.getName())
+                        .description(equipment.getDescription())
                         .build()
         ).collect(Collectors.toList());
     }

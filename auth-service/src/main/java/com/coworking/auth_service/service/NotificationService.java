@@ -14,7 +14,7 @@ public class NotificationService {
     @Async
     public void sendWelcomeEmailAsync(String templateName, UserDto userDtoSend) {
         try {
-            mailServiceFeignClient.sendEmailForWelcome(templateName, userDtoSend);
+            mailServiceFeignClient.sendEmailForWelcome("notifications-service",templateName, userDtoSend);
         } catch (Exception e) {
             System.err.println("Error al enviar correo: " + e.getMessage());
         }

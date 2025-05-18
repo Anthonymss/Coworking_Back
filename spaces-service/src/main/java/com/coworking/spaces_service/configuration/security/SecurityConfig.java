@@ -40,6 +40,7 @@ public class SecurityConfig {
                     authorize
                             //PROXIMA IMPLEMENTATION
                             //.requestMatchers("api/v1/management").hasAnyRole(RoleName.ADMIN.name(), RoleName.USER.name())
+                            .requestMatchers("api/**").permitAll()
                             .requestMatchers("api/v1/spaces/**").permitAll()//hasAuthority(RoleName.USER.name())
                             .requestMatchers("api/v1/test/user").hasAnyRole(RoleName.USER.name())//test
                             .requestMatchers("api/v1/test/admin").hasAnyRole(RoleName.ADMIN.name())//test

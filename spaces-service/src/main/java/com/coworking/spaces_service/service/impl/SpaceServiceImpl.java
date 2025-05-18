@@ -5,7 +5,7 @@ import com.coworking.spaces_service.entity.Space;
 import com.coworking.spaces_service.repository.EquipmentRepository;
 import com.coworking.spaces_service.repository.SpaceEquipmentRepository;
 import com.coworking.spaces_service.repository.SpaceRepository;
-import com.coworking.spaces_service.dto.EquipmentDto;
+import com.coworking.spaces_service.dto.EquipmentForSpacesDto;
 import com.coworking.spaces_service.dto.SpaceDto;
 import com.coworking.spaces_service.dto.SpaceResponseDto;
 import com.coworking.spaces_service.service.SpaceService;
@@ -106,8 +106,8 @@ public class SpaceServiceImpl implements SpaceService {
     }
     private SpaceDto convertToDto(Space space) {
         String siteName =space.getSite().getCity()+" - "+space.getSite().getDistrict() ;
-        List<EquipmentDto> equipmentDtoList = space.getSpaceEquipments().stream()
-                .map(equipment -> EquipmentDto.builder()
+        List<EquipmentForSpacesDto> equipmentDtoList = space.getSpaceEquipments().stream()
+                .map(equipment -> EquipmentForSpacesDto.builder()
                         .id(equipment.getEquipment().getId())
                         .name(equipment.getEquipment().getName())
                         .description(equipment.getEquipment().getDescription())
