@@ -2,6 +2,7 @@ package com.coworking.auth_service.controller;
 
 import com.coworking.auth_service.dto.AuthRequest;
 import com.coworking.auth_service.dto.AuthResponseDto;
+import com.coworking.auth_service.dto.GoogleTokenDto;
 import com.coworking.auth_service.dto.UserDto;
 import com.coworking.auth_service.service.IMethodInfoGoogle;
 import com.coworking.auth_service.service.UserService;
@@ -39,8 +40,8 @@ public class AuthController {
 
     @PostMapping("/account/google")
     //@PreAuthorize("hasAnyRole('ADMIN','USER')")
-    public ResponseEntity<Map<String,String>> getGoogleAccountInfo(@RequestBody Map<String, String> body) {
-        Map<String,String> info = infoAccountGoogle.getInfoForAccountGoogle(body.get("token"));
+    public ResponseEntity<Map<String,String>> getGoogleAccountInfo(@RequestBody GoogleTokenDto token) {
+        Map<String,String> info = infoAccountGoogle.getInfoForAccountGoogle(token.getToken());
         return new ResponseEntity<>(info, HttpStatus.OK);
     }
 

@@ -1,4 +1,4 @@
-package com.coworking.management_user.configuration.feigh;
+package com.coworking.management_user.configuration.feighConfig;
 
 import feign.RequestInterceptor;
 import feign.RequestTemplate;

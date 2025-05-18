@@ -1,6 +1,8 @@
 package com.coworking.spaces_service.controller;
 
+import com.coworking.spaces_service.dto.EquipmentForSpacesDto;
 import com.coworking.spaces_service.dto.management.CreateFullSpaceRequest;
+import com.coworking.spaces_service.dto.management.EquipmentDto;
 import com.coworking.spaces_service.dto.management.SiteDto;
 import com.coworking.spaces_service.service.impl.SpaceManagementService;
 import lombok.RequiredArgsConstructor;
@@ -41,6 +43,9 @@ public class ManagementSpacesController {
     public ResponseEntity<List<SiteDto>> getAllSite(){
         return ResponseEntity.ok(this.service.getAllSite());
     }
-
+    @GetMapping("/equipments")
+    public ResponseEntity<List<EquipmentDto>> getAllEquipments(){
+        return ResponseEntity.ok(this.service.getAllEquipments());
+    }
 
 }

@@ -4,14 +4,14 @@ import com.coworking.reservation_service.entity.Reservation;
 import com.coworking.reservation_service.dto.InvoiceRequest;
 import com.coworking.reservation_service.dto.InvoiceResponse;
 import com.coworking.reservation_service.service.InvoiceFeignAdapter;
-import com.coworking.reservation_service.service.feignclient.InvoiceFeignClient;
+import com.coworking.reservation_service.service.feignclient.EsbFeignClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class InvoiceFeignAdapterImpl implements InvoiceFeignAdapter {
-    private final InvoiceFeignClient invoiceFeignClient;
+    private final EsbFeignClient invoiceFeignClient;
 
     @Override
     public InvoiceResponse createInvoice(Reservation reservation, String paymentMethod) {
@@ -21,6 +21,6 @@ public class InvoiceFeignAdapterImpl implements InvoiceFeignAdapter {
                 reservation.getTotalCost(),
                 paymentMethod
         );
-        return invoiceFeignClient.createInvoice(request).getBody();
+        return invoiceFeignClient.createInvoice(request,"invoice-service").getBody();
     }
 }

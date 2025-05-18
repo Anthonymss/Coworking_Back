@@ -1,5 +1,6 @@
 package com.coworking.management_user.service.impl;
 
+import com.coworking.management_user.dto.GoogleTokenDto;
 import com.coworking.management_user.exception.EmailMismatchException;
 import com.coworking.management_user.exception.EmailNotFoundException;
 import com.coworking.management_user.entity.User;
@@ -7,9 +8,8 @@ import com.coworking.management_user.entity.UserAuthentication;
 import com.coworking.management_user.repository.UserAuthenticationRepository;
 import com.coworking.management_user.repository.UserRepository;
 import com.coworking.management_user.dto.UserDto;
-import com.coworking.management_user.service.feignclient.AuthServiceFeignClient;
+import com.coworking.management_user.service.feignclient.EsbServiceFeignClient;
 import com.coworking.management_user.service.UserService;
-import com.coworking.management_user.service.feignclient.StorageServiceFeignClient;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,9 +23,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserAuthenticationRepository userAuthenticationRepository;
     @Autowired
-    private StorageServiceFeignClient storageServiceFeignClient;
-    @Autowired
-    private AuthServiceFeignClient authServiceFeignClient;
+    private EsbServiceFeignClient esbServiceFeignClient;
     private static final String AUTH_SERVICE_NAME = "auth-service";
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -50,7 +48,7 @@ public class UserServiceImpl implements UserService {
         }
 
         try {
-            String imageUrl = storageServiceFeignClient.upload(file);
+            String imageUrl = esbServiceFeignClient.upload(file,"storage-service");
             User user = userOptional.get();
             user.setFirstName(userDto.getFirstName());
             user.setLastName(userDto.getLastName());
@@ -98,9 +96,8 @@ public class UserServiceImpl implements UserService {
         }
         User user = userOpt.get();
         UserAuthentication userAuthentication = new UserAuthentication();
-        Map<String, String> body = new HashMap<>();
-        body.put("token", token);
-        Map<String, String> mapResponseInfoGoogle = authServiceFeignClient.getGoogleAccountInfo(body);
+        GoogleTokenDto googleTokenDto=new GoogleTokenDto(token);
+        Map<String, String> mapResponseInfoGoogle = esbServiceFeignClient.getGoogleAccountInfo("auth-service",googleTokenDto);
         String emailResponse=mapResponseInfoGoogle.get("email");
         if (!email.equals(emailResponse))
             throw new EmailMismatchException("Emails do not match");

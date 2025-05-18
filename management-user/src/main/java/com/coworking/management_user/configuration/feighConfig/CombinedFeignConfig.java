@@ -1,9 +1,10 @@
-package com.coworking.management_user.configuration.feigh;
+/*package com.coworking.management_user.configuration.feighConfig;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import({ FeignClientConfig.class, FeignMultipartSupportConfig.class })
+@Import({ FeignClientConfig.class, FeignMultipartSupportConfig.class ,FeignEncoder.class})
 public class CombinedFeignConfig {
 }
+*/

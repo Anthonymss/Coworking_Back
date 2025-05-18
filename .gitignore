@@ -4,5 +4,3 @@ script.bat
 target/
 # Ignorar todos los directorios 'target' dentro del proyecto
 */target/
-esb-service
-/esb-service

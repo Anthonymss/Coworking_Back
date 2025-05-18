@@ -5,9 +5,9 @@ import lombok.Data;
 
 @Builder
 @Data
-public class EquipmentDto {
+public class EquipmentForSpacesDto {
     private Long id;
     private String name;
     private String description;
-    private Integer quantity;
+    private int quantity;
 }

@@ -18,5 +18,5 @@ public class SpaceDto {
     private String siteName;
     private String address;
     private String spaceType;
-    private List<EquipmentDto> ListEquipment;
+    private List<EquipmentForSpacesDto> ListEquipment;
 }
