@@ -10,14 +10,21 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
+import org.springframework.security.core.Authentication;
 
 @RestController
 @RequestMapping("api/v1/management/user")
+
 @AllArgsConstructor
 public class ManagementUserController {
     private final UserService userService;
     @GetMapping("{email}")
-    public ResponseEntity<UserDto> getInfoUserByEmail(@PathVariable String email) {
+    public ResponseEntity<UserDto> getInfoUserByEmail(@PathVariable String email, Authentication authentication) {
+
+        String emailFromToken = authentication.getName();
+        if (!emailFromToken.equalsIgnoreCase(email)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         return new ResponseEntity<>(userService.getUserByEmail(email),HttpStatus.OK);
     }
     @DeleteMapping("/{id}")

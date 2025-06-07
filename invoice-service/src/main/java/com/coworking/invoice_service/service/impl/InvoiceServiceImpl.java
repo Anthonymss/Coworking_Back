@@ -23,7 +23,7 @@ public class InvoiceServiceImpl implements InvoiceService {
     public InvoiceResponse createInvoice(InvoiceRequest invoiceRequest) {
         BigDecimal subtotal = invoiceRequest.getTotalCost();//reservation
         BigDecimal taxAmount = calculateTax(subtotal);
-        BigDecimal totalCost = subtotal.add(taxAmount);
+        //agregar o implementar descuentos
         Invoice invoice = Invoice.builder()
                 .invoiceNumber(generateInvoiceNumber())
                 .reservationId(invoiceRequest.getReservationId())
@@ -31,7 +31,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .issueDate(LocalDateTime.now())
                 .taxAmount(taxAmount)
                 .subtotal(subtotal)
-                .totalCost(totalCost)
+                .totalCost(subtotal)
                 .paymentMethod(invoiceRequest.getPaymentMethod())
                 .status("Paid")
                 .build();

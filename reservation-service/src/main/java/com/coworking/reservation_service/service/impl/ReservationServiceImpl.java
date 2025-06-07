@@ -4,9 +4,11 @@ import com.coworking.reservation_service.dto.*;
 import com.coworking.reservation_service.entity.Reservation;
 import com.coworking.reservation_service.repository.ReservationRepository;
 import com.coworking.reservation_service.service.*;
+import com.coworking.reservation_service.service.operation_cost.CostCalculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.time.format.DateTimeFormatter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,11 +25,12 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationValidator reservationValidator;
     private final CostCalculator costCalculator;
     private final NotificationService notificationService;
+    DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a");
+    DateTimeFormatter reservationDateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm a");
 
     @Transactional
     @Override
     public ReservationInvoiceDetailsResponse saveReservation(ReservationRequestDto reservationDto) {
-        System.out.println("RR=>> "+reservationDto);
         Reservation reservation = convertToEntity(reservationDto);
         reservationValidator.validateConflict(reservation);
         reservationValidator.validatePastDates(reservation);
@@ -39,15 +42,19 @@ public class ReservationServiceImpl implements ReservationService {
                 .invoiceNumber(invoiceResponse.getInvoiceNumber())
                 .reservationId(savedReservation.getId())
                 .spaceDetails(spaceResponseDto.getSpaceDescription())
-                .reservationDate(savedReservation.getReservationDate())
+                .reservationDate(savedReservation.getReservationDate().format(reservationDateFormatter))
                 .subtotal(invoiceResponse.getSubtotal())
                 .taxAmount(invoiceResponse.getTaxAmount())
                 .totalCost(invoiceResponse.getTotalCost())
                 .paymentMethod(invoiceResponse.getPaymentMethod())
                 .email(reservationDto.getEmail())
                 .user_id(reservationDto.getUserId())
-                .durationRange(savedReservation.getStartDate() + " - " + savedReservation.getEndDate())
+                .durationRange(
+                        savedReservation.getStartDate().format(dateTimeFormatter)
+                                + " - " +
+                                savedReservation.getEndDate().format(dateTimeFormatter))
                 .build();
+        System.out.println("Datos Invoice: "+invoiceDetailsResponse);
         notificationService.sendReservationEmailAsync("ReservationTemplate",invoiceDetailsResponse );
 
         return invoiceDetailsResponse;

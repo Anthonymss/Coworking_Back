@@ -36,9 +36,9 @@ public class ManagementSpacesController {
         if (request.getName() == null || request.getName().isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("El nombre es obligatorio");
         }
-
-        return ResponseEntity.ok(this.service.createFullSpace(request,image));
+        return  new ResponseEntity<>(this.service.createFullSpace(request,image),HttpStatus.CREATED);
     }
+
     @GetMapping("/sites")
     public ResponseEntity<List<SiteDto>> getAllSite(){
         return ResponseEntity.ok(this.service.getAllSite());

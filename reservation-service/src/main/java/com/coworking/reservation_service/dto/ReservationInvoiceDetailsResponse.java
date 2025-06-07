@@ -17,7 +17,7 @@ public class ReservationInvoiceDetailsResponse {
     private String spaceDetails;
     private String userDetails;
     private String durationRange;
-    private LocalDateTime reservationDate;
+    private String reservationDate;
     private Long reservationId;
     private BigDecimal subtotal;
     private BigDecimal taxAmount;
