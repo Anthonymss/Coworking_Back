@@ -1,6 +1,6 @@
 package com.coworking.reservation_service.service;
 
-import com.coworking.reservation_service.persistence.entity.Reservation;
+import com.coworking.reservation_service.entity.Reservation;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

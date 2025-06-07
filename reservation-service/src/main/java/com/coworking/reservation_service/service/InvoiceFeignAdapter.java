@@ -1,7 +1,7 @@
 package com.coworking.reservation_service.service;
 
-import com.coworking.reservation_service.persistence.entity.Reservation;
-import com.coworking.reservation_service.presentation.dto.InvoiceResponse;
+import com.coworking.reservation_service.entity.Reservation;
+import com.coworking.reservation_service.dto.InvoiceResponse;
 
 public interface InvoiceFeignAdapter {
 

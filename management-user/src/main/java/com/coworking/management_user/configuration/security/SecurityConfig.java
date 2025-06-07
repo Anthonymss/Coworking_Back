@@ -45,7 +45,7 @@ public class SecurityConfig {
                     authorize
                             //PROXIMA IMPLEMENTATION
                             //.requestMatchers("api/v1/management").hasAnyRole(RoleName.ADMIN.name(), RoleName.USER.name())
-                            .requestMatchers("api/v1/management/**").permitAll()//hasAuthority(RoleName.USER.name())
+                            .requestMatchers("api/v1/management/**").hasAuthority(RoleName.USER.name())
                             .anyRequest().authenticated();
                 })
                 .sessionManagement(session -> {

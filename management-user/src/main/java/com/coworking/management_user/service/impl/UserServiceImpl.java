@@ -1,17 +1,19 @@
 package com.coworking.management_user.service.impl;
 
+import com.coworking.management_user.dto.GoogleTokenDto;
 import com.coworking.management_user.exception.EmailMismatchException;
 import com.coworking.management_user.exception.EmailNotFoundException;
-import com.coworking.management_user.persistence.entity.User;
-import com.coworking.management_user.persistence.entity.UserAuthentication;
-import com.coworking.management_user.persistence.repository.UserAuthenticationRepository;
-import com.coworking.management_user.persistence.repository.UserRepository;
-import com.coworking.management_user.presentation.dto.UserDto;
-import com.coworking.management_user.service.feignclient.AuthServiceFeignClient;
+import com.coworking.management_user.entity.User;
+import com.coworking.management_user.entity.UserAuthentication;
+import com.coworking.management_user.repository.UserAuthenticationRepository;
+import com.coworking.management_user.repository.UserRepository;
+import com.coworking.management_user.dto.UserDto;
+import com.coworking.management_user.service.feignclient.EsbServiceFeignClient;
 import com.coworking.management_user.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 
@@ -21,7 +23,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserAuthenticationRepository userAuthenticationRepository;
     @Autowired
-    private AuthServiceFeignClient authServiceFeignClient;
+    private EsbServiceFeignClient esbServiceFeignClient;
     private static final String AUTH_SERVICE_NAME = "auth-service";
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -39,22 +41,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String updateUser( UserDto userDto) {
+    public String updateUser(UserDto userDto, MultipartFile file) {
         Optional<User> userOptional = userRepository.findByEmail(userDto.getEmail());
         if (userOptional.isEmpty()) {
             throw new EmailNotFoundException("Not found user with email " + userDto.getEmail());
         }
+
         try {
+            String imageUrl = esbServiceFeignClient.upload(file,"storage-service");
             User user = userOptional.get();
             user.setFirstName(userDto.getFirstName());
             user.setLastName(userDto.getLastName());
-            user.setProfileImageUrl(userDto.getProfileImageUrl());
+            user.setProfileImageUrl(imageUrl);
+
             userRepository.save(user);
             return "User updated successfully";
-        }catch (Exception e){
-            return "Failed to update user";
+        } catch (Exception e) {
+            return "Failed to update user: " + e.getMessage();
         }
     }
+
 
     @Override
     public void deleteUser(Long id) {
@@ -90,9 +96,8 @@ public class UserServiceImpl implements UserService {
         }
         User user = userOpt.get();
         UserAuthentication userAuthentication = new UserAuthentication();
-        Map<String, String> body = new HashMap<>();
-        body.put("token", token);
-        Map<String, String> mapResponseInfoGoogle = authServiceFeignClient.getGoogleAccountInfo(body);
+        GoogleTokenDto googleTokenDto=new GoogleTokenDto(token);
+        Map<String, String> mapResponseInfoGoogle = esbServiceFeignClient.getGoogleAccountInfo("auth-service",googleTokenDto);
         String emailResponse=mapResponseInfoGoogle.get("email");
         if (!email.equals(emailResponse))
             throw new EmailMismatchException("Emails do not match");
