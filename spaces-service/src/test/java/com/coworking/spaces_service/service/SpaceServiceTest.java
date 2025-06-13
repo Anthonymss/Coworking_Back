@@ -1,17 +1,23 @@
 package com.coworking.spaces_service.service;
-import com.coworking.spaces_service.exception.NotFoundSpace;
-import com.coworking.spaces_service.entity.Site;
-import com.coworking.spaces_service.entity.Space;
-import com.coworking.spaces_service.repository.SpaceRepository;
+
 import com.coworking.spaces_service.dto.SpaceDto;
 import com.coworking.spaces_service.dto.SpaceResponseDto;
+import com.coworking.spaces_service.entity.Site;
+import com.coworking.spaces_service.entity.Space;
+import com.coworking.spaces_service.exception.NotFoundSpace;
+import com.coworking.spaces_service.repository.SpaceRepository;
 import com.coworking.spaces_service.service.impl.SpaceServiceImpl;
 import com.coworking.spaces_service.util.enums.SpaceType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -20,6 +26,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class SpaceServiceImplTest {
 
     @Mock
@@ -27,38 +34,41 @@ class SpaceServiceImplTest {
 
     @InjectMocks
     private SpaceServiceImpl spaceService;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
     @Test
-    void shouldReturnFilteredSpacesAndCacheResults() {
+    void shouldReturnFilteredSpacesWithPagination() {
         Space space = new Space();
         space.setId(1L);
         space.setName("Conference Room");
         space.setPricePerHour(new BigDecimal("100.00"));
 
-        when(spaceRepository.findSpaces("City1", "District1", SpaceType.CONFERENCE_ROOM))
-                .thenReturn(List.of(space));
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Space> page = new PageImpl<>(List.of(space), pageable, 1);
 
-        List<SpaceDto> result = spaceService.getFilteredSpaces("City1", "District1", "CONFERENCE_ROOM");
+        when(spaceRepository.findSpaces("City1", "District1", SpaceType.CONFERENCE_ROOM, pageable))
+                .thenReturn(page);
+
+        Page<SpaceDto> result = (Page<SpaceDto>) spaceService.getFilteredSpaces("City1", "District1", "CONFERENCE_ROOM", 0, 10);
 
         assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals("Conference Room", result.get(0).getName());
+        assertEquals(1, result.getTotalElements());
+        assertEquals("Conference Room", result.getContent().get(0).getName());
 
-        verify(spaceRepository, times(1)).findSpaces("City1", "District1", SpaceType.CONFERENCE_ROOM);
-        spaceService.getFilteredSpaces("City1", "District1", "CONFERENCE_ROOM");
-        verify(spaceRepository, times(1)).findSpaces("City1", "District1", SpaceType.CONFERENCE_ROOM);
+        verify(spaceRepository, times(1)).findSpaces(
+                eq("City1"),
+                eq("District1"),
+                eq(SpaceType.CONFERENCE_ROOM),
+                any(Pageable.class)
+        );
     }
+
+
 
     @Test
     void shouldThrowExceptionWhenSpaceNotFoundById() {
         when(spaceRepository.existsById(1L)).thenReturn(false);
 
         NotFoundSpace exception = assertThrows(NotFoundSpace.class, () -> spaceService.getSpaceById(1L));
+
         assertEquals("No space found with id 1", exception.getMessage());
     }
 
