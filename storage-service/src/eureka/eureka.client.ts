@@ -1,15 +1,18 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Eureka } from 'eureka-js-client';
 
 @Injectable()
 export class EurekaClientService {
   private eurekaClient: Eureka;
 
-  constructor() {
+  constructor(private configService: ConfigService) {
+    const hostName = this.configService.get<string>('HOST_EUREKA') || 'localhost';
+    console.log(hostName);
     this.eurekaClient = new Eureka({
       instance: {
         app: 'storage-service',
-        hostName: 'localhost',
+        hostName: hostName,
         ipAddr: '127.0.0.1',
         port: {
           $: 3000,
@@ -22,8 +25,8 @@ export class EurekaClientService {
         },
       },
       eureka: {
-        host: 'localhost',
-        port: 8761,
+        host: hostName,  
+        port: 8761,        
         servicePath: '/eureka/apps/',
       },
     });

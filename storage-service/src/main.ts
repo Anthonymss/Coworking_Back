@@ -8,6 +8,6 @@ async function bootstrap() {
   app.use(morgan('dev'));
   app.enableShutdownHooks();
   app.enableCors(corsConfig);
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.STORAGE_PORT ?? 3000);
 }
 bootstrap();
