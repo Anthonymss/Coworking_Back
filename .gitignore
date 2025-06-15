@@ -1,6 +1,0 @@
-script.bat
-/.idea
-/target/
-target/
-# Ignorar todos los directorios 'target' dentro del proyecto
-*/target/
