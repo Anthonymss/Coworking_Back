@@ -85,8 +85,7 @@ resource "aws_instance" "coworking_ec2" {
 
     su - ec2-user -c "
       git clone https://github.com/Anthonymss/Coworking_Back.git &&
-      cd Coworking_Back &&
-      git checkout develop
+      cd Coworking_Back
     "
     # falta poner las variables de entorno y levantar , conectarse por ssh para terminar y ejecutar el docker compose
   EOF
