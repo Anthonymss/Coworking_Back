@@ -118,7 +118,6 @@ resource "aws_instance" "coworking_ec2" {
     su - ec2-user -c "
       git clone https://github.com/Anthonymss/Coworking_Back.git &&
       cd Coworking_Back/services
-
       aws ssm get-parameter --name /coworking/env --with-decryption --region us-east-2 --output text --query 'Parameter.Value' > .env
       docker compose --env-file .env up -d
     "
