@@ -13,7 +13,7 @@ export class EurekaClientService {
       instance: {
         app: 'storage-service',
         hostName: hostName,
-        ipAddr: '127.0.0.1',
+        ipAddr: 'storage-service',
         port: {
           $: 3000,
           '@enabled': true,
@@ -25,11 +25,14 @@ export class EurekaClientService {
         },
       },
       eureka: {
-        host: hostName,  
-        port: 8761,        
+        host: hostName,
+        port: 8761,
         servicePath: '/eureka/apps/',
+        maxRetries: 10,
+        requestRetryDelay: 2000,
       },
     });
+    
   }
 
   public start() {
