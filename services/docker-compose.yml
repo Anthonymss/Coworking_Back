@@ -240,6 +240,7 @@ services:
       - eureka-server
     networks:
       - red-microservices
+    restart: always
 
 volumes:
   auth-data:
