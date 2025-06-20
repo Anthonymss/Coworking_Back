@@ -116,14 +116,14 @@ services:
       - ${MANAGEMENT_PORT}:${MANAGEMENT_PORT}
     environment:
       DB_PORT: 3306
-      DB_NAME: ${MYSQL_MEMBERSHIP_DB}
-      DB_HOST: mysql-membership
+      DB_NAME: ${MYSQL_AUTH_DB}
+      DB_HOST: mysql-auth
       DB_USERNAME: ${MYSQL_ROOT_USER}
       DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       DB_MODE: ${DB_MODE}
       HOST_EUREKA: eureka-server
     depends_on:
-      - mysql-membership
+      - mysql-auth
     networks:
       - red-microservices
 
@@ -240,6 +240,7 @@ services:
       - eureka-server
     networks:
       - red-microservices
+    restart: always
 
 volumes:
   auth-data:

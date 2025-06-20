@@ -103,6 +103,7 @@ resource "aws_instance" "coworking_ec2" {
     #!/bin/bash
     exec > /var/log/user-data.log 2>&1
     set -e
+    timedatectl set-timezone America/Lima
 
     yum update -y
     yum install -y git docker
