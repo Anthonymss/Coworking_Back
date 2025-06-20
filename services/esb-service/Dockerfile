@@ -25,4 +25,4 @@ COPY --from=build /app/target/*.jar /app/app.jar
 EXPOSE 9090
 
 # Comando para ejecutar la aplicación
-CMD ["java", "-jar", "/app/app.jar"]
+CMD ["java", "-jar", "/app/app.jar", "--spring.profiles.active=prod"]
