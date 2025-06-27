@@ -89,7 +89,7 @@ resource "aws_instance" "coworking_ec2" {
   iam_instance_profile   = aws_iam_instance_profile.ec2_ssm_profile.name
 
   root_block_device {
-    volume_size = 18
+    volume_size = 12
     volume_type = "gp3"
   }
 
