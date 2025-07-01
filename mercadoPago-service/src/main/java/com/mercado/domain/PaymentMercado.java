@@ -7,14 +7,13 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name ="payment")
-public class Payment {
+public class PaymentMercado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,5 +29,9 @@ public class Payment {
     private LocalDateTime paymentDate;
     @Column(name = "reservation_id", nullable = false)
     private Long reservationId;
+    @Column(name = "payment_id", nullable = false)
+    private String paymentId;
+    @Column(name = "payer_email", nullable = true)
+    private String payerEmail;
 
 }

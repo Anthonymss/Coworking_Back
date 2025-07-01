@@ -2,6 +2,8 @@ package com.mercado.service;
 import com.mercado.MercadoPagoRequest;
 import com.mercado.config.MercadoPagoProperties;
 import com.mercadopago.MercadoPagoConfig;
+import com.mercadopago.resources.payment.Payment;
+import com.mercadopago.client.payment.PaymentClient;
 import com.mercadopago.client.preference.*;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
@@ -16,6 +18,9 @@ import java.util.Map;
 
 @Service
 public class MercadoPagoService {
+
+    @Autowired
+    private PaymentService paymentService;
 
     private final MercadoPagoProperties config;
 
@@ -56,4 +61,36 @@ public class MercadoPagoService {
 
         return preference.getInitPoint();
     }
+
+    public String procesarWebhook(Map<String, Object> payload) {
+        try {
+            String type = (String) payload.get("type");
+            Object actionObj = payload.get("action");
+            String action = actionObj != null ? actionObj.toString() : "";
+
+            if ("payment".equals(type) && action.contains("payment.")) {
+                Map<String, Object> data = (Map) payload.get("data");
+                String paymentId = data.get("id").toString();
+
+                MercadoPagoConfig.setAccessToken(config.getAccessToken());
+                PaymentClient paymentClient = new PaymentClient();
+                Payment payment = paymentClient.get(Long.parseLong(paymentId));
+
+                System.out.println("🧠 Metadata del pago: " + payment.getMetadata());
+                System.out.println("💳 Estado del pago: " + payment.getStatus());
+
+                if ("approved".equals(payment.getStatus())) {
+                    paymentService.registrarPago(payment);
+                }
+            }
+
+            return "Webhook procesado correctamente";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error procesando el webhook: " + e.getMessage();
+        }
+    }
+
+
 }
