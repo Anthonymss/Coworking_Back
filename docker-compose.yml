@@ -1,0 +1,254 @@
+services:
+  mysql-auth:
+    image: mysql:8
+    ports:
+      - ${MYSQL_AUTH_PORT}:3306
+    volumes:
+      - auth-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_AUTH_DB}
+    networks:
+      - red-microservices
+
+  mysql-membership:
+    image: mysql:8
+    ports:
+      - ${MYSQL_MEMBERSHIP_PORT}:3306
+    volumes:
+      - membership-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_MEMBERSHIP_DB}
+    networks:
+      - red-microservices
+
+  mysql-notifications:
+    image: mysql:8
+    ports:
+      - ${MYSQL_NOTIFICATIONS_PORT}:3306
+    volumes:
+      - notifications-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_NOTIFICATIONS_DB}
+    networks:
+      - red-microservices
+
+  mysql-reservation:
+    image: mysql:8
+    ports:
+      - ${MYSQL_RESERVATION_PORT}:3306
+    volumes:
+      - reservation-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_RESERVATION_DB}
+    networks:
+      - red-microservices
+
+  mysql-spaces:
+    image: mysql:8
+    ports:
+      - ${MYSQL_SPACES_PORT}:3306
+    volumes:
+      - spaces-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_SPACES_DB}
+    networks:
+      - red-microservices
+
+  mysql-invoice:
+    image: mysql:8
+    ports:
+      - ${MYSQL_INVOICE_PORT}:3306
+    volumes:
+      - invoice-data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_INVOICE_DB}
+    networks:
+      - red-microservices
+
+  eureka-server:
+    build:
+      context: ./eureka
+    ports:
+      - ${EUREKA_PORT}:${EUREKA_PORT}
+    networks:
+      - red-microservices
+
+  gateway-service:
+    build:
+      context: ./gateway-service
+    ports:
+      - ${GATEWAY_PORT}:${GATEWAY_PORT}
+    environment:
+      HOST_EUREKA: eureka-server
+    networks:
+      - red-microservices
+
+  auth-service:
+    build:
+      context: ./auth-service
+    ports:
+      - ${AUTH_PORT}:${AUTH_PORT}
+    environment:
+      DB_PORT: 3306
+      DB_NAME: ${MYSQL_AUTH_DB}
+      DB_HOST: mysql-auth
+      DB_USERNAME: ${MYSQL_ROOT_USER}
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_MODE: ${DB_MODE}
+      HOST_EUREKA: eureka-server
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+    depends_on:
+      - mysql-auth
+    networks:
+      - red-microservices
+
+  management-service:
+    build:
+      context: ./management-user
+    ports:
+      - ${MANAGEMENT_PORT}:${MANAGEMENT_PORT}
+    environment:
+      DB_PORT: 3306
+      DB_NAME: ${MYSQL_AUTH_DB}
+      DB_HOST: mysql-auth
+      DB_USERNAME: ${MYSQL_ROOT_USER}
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_MODE: ${DB_MODE}
+      HOST_EUREKA: eureka-server
+    depends_on:
+      - mysql-auth
+    networks:
+      - red-microservices
+
+  membership-service:
+    build:
+      context: ./membership-service
+    ports:
+      - ${MEMBERSHIP_PORT}:${MEMBERSHIP_PORT}
+    environment:
+      DB_PORT: 3306
+      DB_NAME: ${MYSQL_MEMBERSHIP_DB}
+      DB_HOST: mysql-membership
+      DB_USERNAME: ${MYSQL_ROOT_USER}
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_MODE: ${DB_MODE}
+      HOST_EUREKA: eureka-server
+    depends_on:
+      - mysql-membership
+    networks:
+      - red-microservices
+
+  notifications-service:
+    build:
+      context: ./notifications-service
+    ports:
+      - ${NOTIFICATIONS_PORT}:${NOTIFICATIONS_PORT}
+    environment:
+      DB_PORT: 3306
+      DB_NAME: ${MYSQL_NOTIFICATIONS_DB}
+      DB_HOST: mysql-notifications
+      DB_USERNAME: ${MYSQL_ROOT_USER}
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_MODE: ${DB_MODE}
+      HOST_EUREKA: eureka-server
+    depends_on:
+      - mysql-notifications
+    networks:
+      - red-microservices
+
+  reservation-service:
+    build:
+      context: ./reservation-service
+    ports:
+      - ${RESERVATION_PORT}:${RESERVATION_PORT}
+    environment:
+      DB_PORT: 3306
+      DB_NAME: ${MYSQL_RESERVATION_DB}
+      DB_HOST: mysql-reservation
+      DB_USERNAME: ${MYSQL_ROOT_USER}
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_MODE: ${DB_MODE}
+      HOST_EUREKA: eureka-server
+    depends_on:
+      - mysql-reservation
+    networks:
+      - red-microservices
+
+  invoice-service:
+    build:
+      context: ./invoice-service
+    ports:
+      - ${INVOICE_PORT}:${INVOICE_PORT}
+    environment:
+      DB_PORT: 3306
+      DB_NAME: ${MYSQL_INVOICE_DB}
+      DB_HOST: mysql-invoice
+      DB_USERNAME: ${MYSQL_ROOT_USER}
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_MODE: ${DB_MODE}
+      HOST_EUREKA: eureka-server
+    depends_on:
+      - mysql-invoice
+    networks:
+      - red-microservices
+
+  spaces-service:
+    build:
+      context: ./spaces-service
+    ports:
+      - ${SPACES_PORT}:${SPACES_PORT}
+    environment:
+      DB_PORT: 3306
+      DB_NAME: ${MYSQL_SPACES_DB}
+      DB_HOST: mysql-spaces
+      DB_USERNAME: ${MYSQL_ROOT_USER}
+      DB_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      DB_MODE: ${DB_MODE}
+      HOST_EUREKA: eureka-server
+    depends_on:
+      - mysql-spaces
+    networks:
+      - red-microservices
+  esb-service:
+    build:
+      context: ./esb-service
+    ports:
+      - ${ESB_PORT}:${ESB_PORT}
+    environment:
+      HOST_EUREKA: eureka-server
+    networks:
+      - red-microservices
+  storage-service:
+    build:
+      context: ./storage-service
+    ports:
+      - ${STORAGE_PORT}:${STORAGE_PORT}
+    environment:
+      HOST_EUREKA: eureka-server
+      JWT_SECRET: ${JWT_SECRET}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+    depends_on:
+      - eureka-server
+    networks:
+      - red-microservices
+    restart: always
+
+volumes:
+  auth-data:
+  membership-data:
+  notifications-data:
+  reservation-data:
+  spaces-data:
+  invoice-data:
+
+networks:
+  red-microservices:
