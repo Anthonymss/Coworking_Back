@@ -1,4 +1,4 @@
-package com.mercado;
+package com.mercado.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
