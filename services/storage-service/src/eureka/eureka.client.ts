@@ -8,14 +8,19 @@ export class EurekaClientService {
 
   constructor(private configService: ConfigService) {
     const hostName = this.configService.get<string>('HOST_EUREKA') || 'localhost';
-    console.log(hostName);
+    const storagePort = parseInt(this.configService.get<string>('STORAGE_PORT') || '3000', 10);
+
+    console.log(`🌍 Eureka host: ${hostName}`);
+    console.log(`📦 STORAGE_PORT: ${storagePort}`);
+
     this.eurekaClient = new Eureka({
       instance: {
         app: 'storage-service',
+        instanceId: `storage-service:${storagePort}`,
         hostName: hostName,
         ipAddr: 'storage-service',
         port: {
-          $: 3000,
+          $: storagePort,
           '@enabled': true,
         },
         vipAddress: 'storage-service',
@@ -32,13 +37,12 @@ export class EurekaClientService {
         requestRetryDelay: 2000,
       },
     });
-    
   }
 
   public start() {
     this.eurekaClient.start((error) => {
       if (error) {
-        console.error('Error al iniciar Eureka:', error);
+        console.error('❌ Error al iniciar Eureka:', error);
       } else {
         console.log('🚀 Eureka cliente iniciado correctamente');
       }
@@ -48,9 +52,9 @@ export class EurekaClientService {
   public stop() {
     this.eurekaClient.stop((error) => {
       if (error) {
-        console.error('Error al detener Eureka:', error);
+        console.error('❌ Error al detener Eureka:', error);
       } else {
-        console.log('Eureka cliente detenido correctamente');
+        console.log('🛑 Eureka cliente detenido correctamente');
       }
     });
   }
@@ -58,10 +62,10 @@ export class EurekaClientService {
   public getInstancesByAppId(appId: string) {
     try {
       const instances = this.eurekaClient.getInstancesByAppId(appId);
-      console.log('Instancias obtenidas:', instances);
+      console.log('📦 Instancias obtenidas:', instances);
       return instances;
     } catch (error) {
-      console.error('Error al obtener instancias por AppId:', error);
+      console.error('❌ Error al obtener instancias por AppId:', error);
       return null;
     }
   }
@@ -69,10 +73,10 @@ export class EurekaClientService {
   public getInstancesByVipAddress(vipAddress: string) {
     try {
       const instances = this.eurekaClient.getInstancesByVipAddress(vipAddress);
-      console.log('Instancias obtenidas por VIP:', instances);
+      console.log('📡 Instancias obtenidas por VIP:', instances);
       return instances;
     } catch (error) {
-      console.error('Error al obtener instancias por VIP:', error);
+      console.error('❌ Error al obtener instancias por VIP:', error);
       return null;
     }
   }
