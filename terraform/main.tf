@@ -3,7 +3,7 @@ data "aws_vpc" "default" {
 }
 
 resource "aws_security_group" "sg" {
-  name        = "terraform-sg"
+  name        = "terraform-sg2"
   description = "Allow HTTP, HTTPS, SSH, 8080, 8761"
   vpc_id      = data.aws_vpc.default.id
 
@@ -114,12 +114,14 @@ resource "aws_instance" "coworking_ec2" {
 
     timedatectl set-timezone America/Lima
     dnf update -y
-    dnf install -y git docker nginx python3-certbot-nginx
+    dnf install -y git docker nginx
+    dnf install -y python3-certbot-nginx
 
     systemctl start docker
     systemctl enable docker
     systemctl start nginx
     systemctl enable nginx
+
     usermod -aG docker ec2-user
 
     mkdir -p /usr/local/libexec/docker/cli-plugins
@@ -129,44 +131,44 @@ resource "aws_instance" "coworking_ec2" {
 
     # Configuración temporal HTTP para certbot
     cat <<EOL > /etc/nginx/conf.d/coworking.conf
-server {
-    listen 80;
-    server_name coworkingwebsite.website www.coworkingwebsite.website;
+    server {
+        listen 80;
+        server_name coworkingwebsite.website www.coworkingwebsite.website;
 
-    location / {
-        proxy_pass http://localhost:8080;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade \$http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host \$host;
-        proxy_cache_bypass \$http_upgrade;
+        location / {
+            proxy_pass http://localhost:8080;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade \$http_upgrade;
+            proxy_set_header Connection 'upgrade';
+            proxy_set_header Host \$host;
+            proxy_cache_bypass \$http_upgrade;
+        }
     }
-}
-EOL
+    EOL
 
-    nginx -t && systemctl reload nginx
+        nginx -t && systemctl reload nginx
 
-    # Solicitar certificado HTTPS
-    certbot --nginx --redirect -d coworkingwebsite.website -d www.coworkingwebsite.website \
-      --non-interactive --agree-tos -m giananthonys59@gmail.com || true
+        # Solicitar certificado HTTPS
+        certbot --nginx --redirect -d coworkingwebsite.website -d www.coworkingwebsite.website \
+          --non-interactive --agree-tos -m giananthonys59@gmail.com || true
 
-    # Renovación automática
-    echo "0 3 * * * root certbot renew --quiet" >> /etc/crontab
+        # Renovación automática
+        echo "0 3 * * * root certbot renew --quiet" >> /etc/crontab
 
-    # Script de despliegue como ec2-user
-    cat <<'EOC' > /home/ec2-user/start-app.sh
-#!/bin/bash
-cd /home/ec2-user
-git clone https://github.com/Anthonymss/Coworking_Back.git
-cd Coworking_Back/services
-aws ssm get-parameter --name /coworking/env --with-decryption --region us-east-2 --output text --query 'Parameter.Value' > .env
-docker compose --env-file .env up -d
-EOC
+        # Script de despliegue como ec2-user
+        cat <<'EOC' > /home/ec2-user/start-app.sh
+        #!/bin/bash
+        cd /home/ec2-user
+        git clone https://github.com/Anthonymss/Coworking_Back.git
+        cd Coworking_Back/services
+        aws ssm get-parameter --name /coworking/env --with-decryption --region us-east-2 --output text --query 'Parameter.Value' > .env
+        docker compose --env-file .env up -d
+        EOC
 
-    chown ec2-user:ec2-user /home/ec2-user/start-app.sh
-    chmod +x /home/ec2-user/start-app.sh
-    su - ec2-user -c "/home/ec2-user/start-app.sh"
-  EOF
+        chown ec2-user:ec2-user /home/ec2-user/start-app.sh
+        chmod +x /home/ec2-user/start-app.sh
+        su - ec2-user -c "/home/ec2-user/start-app.sh"
+      EOF
 }
 
 resource "aws_eip_association" "coworking_eip_assoc" {
