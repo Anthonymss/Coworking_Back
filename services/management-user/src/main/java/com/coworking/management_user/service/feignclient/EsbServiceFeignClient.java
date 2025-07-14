@@ -24,7 +24,6 @@ public interface EsbServiceFeignClient {
 
     @PostMapping(value = "route/upload/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     String upload(
-            @RequestPart("user") UserDto userDto,
             @RequestPart("file") MultipartFile file,
             @RequestHeader("X-Service-Name") String serviceName
     );
