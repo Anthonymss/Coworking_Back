@@ -46,10 +46,11 @@ public class ManagementUserController {
     @PutMapping(value = "update-user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> updateUser(
             @RequestPart("user") UserDto userDto,
-            @RequestPart("file") MultipartFile file
+            @RequestPart(value = "file", required = false) MultipartFile file
     ) {
-        userService.updateUser(userDto, file);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        String result = userService.updateUser(userDto, file);
+        return ResponseEntity.ok(result); 
     }
+    
 
 }

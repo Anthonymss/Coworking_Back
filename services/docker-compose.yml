@@ -1,6 +1,6 @@
 services:
   mysql-auth:
-    image: mysql:8
+    image: mysql:8.0
     ports:
       - ${MYSQL_AUTH_PORT}:3306
     volumes:
@@ -12,7 +12,7 @@ services:
       - red-microservices
 
   mysql-membership:
-    image: mysql:8
+    image: mysql:8.0
     ports:
       - ${MYSQL_MEMBERSHIP_PORT}:3306
     volumes:
@@ -24,7 +24,7 @@ services:
       - red-microservices
 
   mysql-notifications:
-    image: mysql:8
+    image: mysql:8.0
     ports:
       - ${MYSQL_NOTIFICATIONS_PORT}:3306
     volumes:
@@ -36,7 +36,7 @@ services:
       - red-microservices
 
   mysql-reservation:
-    image: mysql:8
+    image: mysql:8.0
     ports:
       - ${MYSQL_RESERVATION_PORT}:3306
     volumes:
@@ -48,7 +48,7 @@ services:
       - red-microservices
 
   mysql-spaces:
-    image: mysql:8
+    image: mysql:8.0
     ports:
       - ${MYSQL_SPACES_PORT}:3306
     volumes:
@@ -60,7 +60,7 @@ services:
       - red-microservices
 
   mysql-invoice:
-    image: mysql:8
+    image: mysql:8.0
     ports:
       - ${MYSQL_INVOICE_PORT}:3306
     volumes:
