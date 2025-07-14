@@ -21,10 +21,11 @@ public interface EsbServiceFeignClient {
             @RequestHeader("X-Service-Name") String serviceName,
             @RequestBody GoogleTokenDto body
     );
-
     @PostMapping(value = "route/upload/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     String upload(
             @RequestPart("file") MultipartFile file,
-            @RequestHeader("X-Service-Name") String serviceName
+            @RequestHeader("X-Service-Name") String serviceName,
+            @RequestHeader("Authorization") String token
     );
+
 }

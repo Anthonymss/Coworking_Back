@@ -13,6 +13,8 @@ import com.coworking.management_user.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -48,7 +50,12 @@ public class UserServiceImpl implements UserService {
         }
 
         try {
-            String imageUrl = esbServiceFeignClient.upload(file,"storage-service");
+            String token = Optional.ofNullable(RequestContextHolder.getRequestAttributes())
+                    .map(attrs -> ((ServletRequestAttributes) attrs).getRequest().getHeader("Authorization"))
+                    .orElseThrow(() -> new RuntimeException("Authorization header not found"));
+
+            String imageUrl = esbServiceFeignClient.upload(file, "storage-service", token);
+
             User user = userOptional.get();
             user.setFirstName(userDto.getFirstName());
             user.setLastName(userDto.getLastName());
@@ -60,6 +67,7 @@ public class UserServiceImpl implements UserService {
             return "Failed to update user: " + e.getMessage();
         }
     }
+
 
 
     @Override
