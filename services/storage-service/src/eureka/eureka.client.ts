@@ -7,18 +7,20 @@ export class EurekaClientService {
   private eurekaClient: Eureka;
 
   constructor(private configService: ConfigService) {
-    const hostName = this.configService.get<string>('HOST_EUREKA') || 'localhost';
+    const eurekaHost = this.configService.get<string>('HOST_EUREKA') || 'localhost';
     const storagePort = parseInt(this.configService.get<string>('STORAGE_PORT') || '3000', 10);
+    const serviceHostName = 'storage-service'; // nombre del contenedor en Docker
 
-    console.log(`🌍 Eureka host: ${hostName}`);
+    console.log(`🌍 Eureka host: ${eurekaHost}`);
     console.log(`📦 STORAGE_PORT: ${storagePort}`);
+    console.log(`🛰️  Registrando storage-service en Eureka con IP: ${serviceHostName} y puerto: ${storagePort}`);
 
     this.eurekaClient = new Eureka({
       instance: {
         app: 'storage-service',
         instanceId: `storage-service:${storagePort}`,
-        hostName: hostName,
-        ipAddr: 'storage-service',
+        hostName: serviceHostName,
+        ipAddr: serviceHostName,
         port: {
           $: storagePort,
           '@enabled': true,
@@ -30,7 +32,7 @@ export class EurekaClientService {
         },
       },
       eureka: {
-        host: hostName,
+        host: eurekaHost,
         port: 8761,
         servicePath: '/eureka/apps/',
         maxRetries: 10,
