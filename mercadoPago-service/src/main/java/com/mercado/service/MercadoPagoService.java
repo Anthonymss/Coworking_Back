@@ -1,5 +1,5 @@
 package com.mercado.service;
-import com.mercado.MercadoPagoRequest;
+import com.mercado.dto.MercadoPagoRequest;
 import com.mercado.config.MercadoPagoProperties;
 import com.mercadopago.MercadoPagoConfig;
 import com.mercadopago.resources.payment.Payment;
@@ -10,6 +10,7 @@ import com.mercadopago.exceptions.MPException;
 import com.mercadopago.resources.preference.Preference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -18,6 +19,8 @@ import java.util.Map;
 
 @Service
 public class MercadoPagoService {
+    @Autowired
+    private RestTemplate restTemplate;
 
     @Autowired
     private PaymentService paymentService;
@@ -48,8 +51,13 @@ public class MercadoPagoService {
                 .build();
 
         Map<String, Object> metadata = new HashMap<>();
-        metadata.put("reserva_id", requestBody.getReservaId());
-
+        if (requestBody.getReservaId() != null && requestBody.getReservaId() > 0) {
+            metadata.put("reserva_id", requestBody.getReservaId());
+        }
+        if (requestBody.getMembresiaId() != null && requestBody.getMembresiaId() > 0) {
+            metadata.put("membresia_id", requestBody.getMembresiaId());
+        }
+        System.out.println("[DEBUG] Metadata enviada en preferencia: " + metadata);
         PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                 .items(List.of(item))
                 .backUrls(backUrls)
@@ -76,21 +84,31 @@ public class MercadoPagoService {
                 PaymentClient paymentClient = new PaymentClient();
                 Payment payment = paymentClient.get(Long.parseLong(paymentId));
 
-                System.out.println("🧠 Metadata del pago: " + payment.getMetadata());
-                System.out.println("💳 Estado del pago: " + payment.getStatus());
-
                 if ("approved".equals(payment.getStatus())) {
-                    paymentService.registrarPago(payment);
+                    Map<String, Object> metadata = payment.getMetadata();
+                    if(metadata.containsKey("reserva_id")){
+                        //Double reservaIdDouble = Double.valueOf(payment.getMetadata().get("reserva_id").toString());
+                        Double reservaIdDouble = Double.valueOf(metadata.get("reserva_id").toString());
+                        Long reservaId = reservaIdDouble.longValue();
+                        paymentService.registrarPago(payment);
+                        String url = "http://localhost:8087/api/v1/invoices/actualizar-estado/" + reservaId + "?nuevoEstado=Paid";
+                        try {
+                            restTemplate.put(url, null);
+                            System.out.println("Estado de la factura actualizado a Paid");
+                        } catch (Exception ex) {
+                            System.out.println("Error actualizando estado de factura: " + ex.getMessage());
+                        }
+                    }else if(metadata.containsKey("membresia_id")){
+                        Double membresiaIdDouble = Double.valueOf(metadata.get("membresia_id").toString());
+                        Long membresiaId = membresiaIdDouble.longValue();
+                        paymentService.registrarPago(payment);
+                    }
                 }
             }
-
             return "Webhook procesado correctamente";
-
         } catch (Exception e) {
             e.printStackTrace();
             return "Error procesando el webhook: " + e.getMessage();
         }
     }
-
-
 }

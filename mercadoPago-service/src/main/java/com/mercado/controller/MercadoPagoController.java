@@ -1,7 +1,7 @@
 package com.mercado.controller;
 
 
-import com.mercado.MercadoPagoRequest;
+import com.mercado.dto.MercadoPagoRequest;
 import com.mercado.repository.PaymentRepository;
 import com.mercado.service.MercadoPagoService;
 import com.mercadopago.exceptions.MPApiException;
@@ -38,7 +38,7 @@ public class MercadoPagoController {
 
     @PostMapping("/webhook")
     public ResponseEntity<String> recibirWebhook(@RequestBody Map<String, Object> payload) {
-        System.out.println("🧠 Webhook recibido: " + payload);
+        System.out.println("Webhook recibido: " + payload);
         String resultado = mercadoPagoService.procesarWebhook(payload);
         return ResponseEntity.ok(resultado);
     }

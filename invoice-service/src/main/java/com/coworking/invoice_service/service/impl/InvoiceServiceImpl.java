@@ -18,6 +18,18 @@ public class InvoiceServiceImpl implements InvoiceService {
     private final InvoiceRepository invoiceRepository;
     private static final BigDecimal TAX_RATE = new BigDecimal("0.18");
 
+
+
+    @Override
+    public void actualizarEstado(Long reservaId, String nuevoEstado) {
+        Invoice factura = invoiceRepository.findByReservationId(reservaId);
+        if (factura != null) {
+            factura.setStatus(nuevoEstado);
+            invoiceRepository.save(factura);
+        }
+    }
+
+
     @Override
     @Transactional
     public InvoiceResponse createInvoice(InvoiceRequest invoiceRequest) {
@@ -33,7 +45,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                 .subtotal(subtotal)
                 .totalCost(subtotal)
                 .paymentMethod(invoiceRequest.getPaymentMethod())
-                .status("Paid")
+                .status("Pending")
                 .build();
         invoiceRepository.save(invoice);
         return convertToDto(invoice);
@@ -62,5 +74,7 @@ public class InvoiceServiceImpl implements InvoiceService {
                .status(invoice.getStatus())
                .build();
     }
+
+
 
 }

@@ -8,4 +8,6 @@ public interface InvoiceService {
     Invoice getInvoiceByReservationId(Long reservationId);
 
     InvoiceResponse createInvoice(InvoiceRequest invoiceRequest);
+
+    void actualizarEstado(Long reservaId, String nuevoEstado);
 }

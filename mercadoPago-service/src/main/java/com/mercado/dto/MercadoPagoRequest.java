@@ -12,5 +12,6 @@ public class MercadoPagoRequest {
     private int quantity;
     private double unitPrice;
     private Long reservaId;
+    private Long membresiaId;
 
 }
