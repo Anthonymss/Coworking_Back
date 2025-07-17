@@ -12,4 +12,5 @@ public interface SpaceService {
     public SpaceResponseDto getInfoSpace(Long id);
 
     Map<String,List<String>> getListFilterSpace();
+    List<String> listNamesForId(List<Long> listId);
 }

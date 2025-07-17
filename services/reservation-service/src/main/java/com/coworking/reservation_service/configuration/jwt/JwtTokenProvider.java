@@ -77,4 +77,23 @@ public class JwtTokenProvider {
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
     }
+    public Long getUserIdFromToken(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+
+        Object id = claims.get("id");
+        if (id instanceof Integer) {
+            return ((Integer) id).longValue();
+        } else if (id instanceof Long) {
+            return (Long) id;
+        } else if (id != null) {
+            return Long.parseLong(id.toString());
+        } else {
+            throw new InvalidJwtTokenException("JWT does not contain 'id' claim");
+        }
+    }
+
 }

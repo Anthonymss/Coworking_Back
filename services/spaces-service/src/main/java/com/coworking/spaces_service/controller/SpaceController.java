@@ -43,6 +43,10 @@ public class SpaceController {
     public ResponseEntity<Map<String,List<String>>> getListFiltro(){
         return new ResponseEntity<>(spaceService.getListFilterSpace(),HttpStatus.OK);
     }
+    @PostMapping("/id-name")
+    public ResponseEntity<List<String>> getAlllNameForSpaceByid(@RequestBody List<Long> listId){
+        return new ResponseEntity<>(this.spaceService.listNamesForId(listId),HttpStatus.OK);
+    }
 
 
 }

@@ -6,8 +6,11 @@ import com.coworking.reservation_service.dto.InvoiceResponse;
 import com.coworking.reservation_service.dto.ReservationInvoiceDetailsResponse;
 import com.coworking.reservation_service.dto.SpaceResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @FeignClient(name = "esb-service",configuration = FeignClientConfig.class)
@@ -17,17 +20,24 @@ public interface EsbFeignClient {
             @RequestBody InvoiceRequest invoiceRequest,
             @RequestHeader("X-Service-Name") String serviceName
     );
-
     @PostMapping("route/api/v1/notifications/send/reservation")
-    ResponseEntity<String> sendEmailForWelcome(
+    ResponseEntity<String> sendNotificationReservation(
             @RequestParam String templateName,
             @RequestBody ReservationInvoiceDetailsResponse reservationInvoiceDetailsResponse,
             @RequestHeader("X-Service-Name") String serviceName
     );
+
+
 
     @GetMapping("route/api/v1/spaces/price/{id}")
     ResponseEntity<SpaceResponseDto> getInfoSpace(
             @PathVariable Long id,
             @RequestHeader("X-Service-Name") String serviceName
     );
+    @PostMapping("route/api/v1/spaces/id-name")
+    ResponseEntity<List<String>> getAlllNameForSpaceByid(
+            @RequestBody List<Long> listId,
+            @RequestHeader("X-Service-Name") String serviceName
+    );
+
 }

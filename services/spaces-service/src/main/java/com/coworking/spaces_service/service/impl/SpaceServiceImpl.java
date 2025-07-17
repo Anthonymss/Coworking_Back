@@ -92,6 +92,14 @@ public class SpaceServiceImpl implements SpaceService {
         return new HashMap<>(filterCache);
     }
 
+    @Override
+    public List<String> listNamesForId(List<Long> listId) {
+        return this.spaceRepository.findAll().stream()
+                .filter(space -> listId.contains(space.getId()))
+                .map(Space::getName)
+                .toList();
+    }
+
     private String generateCacheKey(String city, String district, String type) {
         return String.join("_", city == null ? "" : city, district == null ? "" : district, type == null ? "" : type);
     }

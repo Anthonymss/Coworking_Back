@@ -27,6 +27,7 @@ public class NotificationController {
         notificationService.sendNotification(reservationInvoiceDetailsResponse, templateName);
         return new ResponseEntity<>("Notification request received", HttpStatus.OK);
     }
+
     @GetMapping
     public String getNotificationTemplates() {
         return "hello";

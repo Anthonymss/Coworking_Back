@@ -14,7 +14,9 @@ public class NotificationService {
     @Async
     public void sendReservationEmailAsync(String templateName, ReservationInvoiceDetailsResponse reservationInvoiceDetailsResponse) {
         try {
-            esbFeignClient.sendEmailForWelcome(templateName, reservationInvoiceDetailsResponse,"notifications-service");
+            System.out.println("CUERPO A ENVIAR: "+reservationInvoiceDetailsResponse);
+            System.out.println("Tempalte: "+templateName);
+            esbFeignClient.sendNotificationReservation(templateName, reservationInvoiceDetailsResponse,"notifications-service");
         } catch (Exception e) {
             System.err.println("Error al enviar correo: " + e.getMessage());
         }

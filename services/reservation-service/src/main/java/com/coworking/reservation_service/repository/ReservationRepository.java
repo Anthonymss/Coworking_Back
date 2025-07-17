@@ -18,5 +18,5 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
     boolean existsBySpaceIdAndTimeRange(@Param("spaceId") Long spaceId,
                                         @Param("startDate") LocalDateTime startDate,
                                         @Param("endDate") LocalDateTime endDate);
-
+    List<Reservation> findByUserId(Long userId);
 }
