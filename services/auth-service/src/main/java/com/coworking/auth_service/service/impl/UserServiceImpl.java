@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService, IMethodInfoGoogle {
         }
         User newUser = User.builder()
                 .firstName(firstName)
-                .lastName(lastName)
+                .lastName(lastName != null ? lastName : "NoApellido")
                 .email(email)
                 .profileImageUrl(profileImageUrl)
                 .roles(Set.of(roleRepository.findByName(RoleName.USER)))
