@@ -21,7 +21,7 @@ public class  User {
     @NotNull
     @Column(name = "first_name",length = 50,nullable = false)
     private String firstName;
-    @Column(name = "last_name",length = 50,nullable = false)
+    @Column(name = "last_name",length = 50,nullable = true)
     private String lastName;
     @NotNull
     @Column(unique = true,length = 100,nullable = false)
